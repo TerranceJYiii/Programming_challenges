@@ -1,0 +1,2 @@
+ls = [*"aeiou"]
+print(ls)
