@@ -58,16 +58,159 @@ The file, Euler_54.txt, contains one-thousand random hands dealt to two players.
 
 How many hands does Player 1 win?""")
 
-value = [*"23456789TJQKA"]
+
+# 0 High Card: Highest value card.
+# 1 One Pair: 4
+# 2 Two Pairs: 3
+# 3 Three of a Kind: 3
+# 4 Straight: 5, S
+# 5 Flush: 5, F
+# 6 Full House: 2
+# 7 Four of a Kind: 2
+# 8 Straight Flush: 5, S, F
+# 9 Royal Flush: 5, S, F
+
+
+
+value = "23456789TJQKA" # 8 = RF
+
+def sort_num(num):
+    val = [value.index(each) for each in num]
+    val = sorted(val, reverse=True)
+    return [value[i] for i in val]
+
+def flush_check(num):
+	hand = sort_num(num)
+	hand.reverse()
+	# print(hand)
+	hand = "".join(hand)
+	
+	if hand in value:
+		# print(hand)
+		return value.index(hand) + 1
+	else:
+		return False
+
+def check_cards(player):
+	num = [each[0] for each in player]
+	suit = set([each[1] for each in player])
+    
+	if len(suit) == 1:
+		Flush = True
+	else:
+		Flush = False
+
+	# print(sort_num(num))
+	s_num = set(num)
+	l = len(s_num)
+
+	if l == 2:
+		x = num.count(num[0])
+		if x == 1 or x == 4:
+			# pass # TODO 7
+			for each in s_num:
+				if num.count(each) == 4:
+					s_num.remove(each)	
+					return 7,  [each] + sort_num(s_num)
+		
+		else:
+			# pass # TODO 6
+			for each in s_num:
+				if num.count(each) == 3:
+					s_num.remove(each)	
+					return 6,  [each] + sort_num(s_num)
+
+	elif l == 3:
+		for each in num:
+			if num.count(each) == 1:
+				pass
+			elif num.count(each) == 2:
+				# pass # TODO 2
+				for each in s_num:
+					if num.count(each) == 1:
+						s_num.remove(each)	
+						return 2, sort_num(s_num) + [each]
+			
+			else:
+				# pass # TODO 3
+				for each in s_num:
+					if num.count(each) == 3:
+						s_num.remove(each)	
+						return 3, [each] + sort_num(s_num)
+
+	elif l == 4:
+		# pass # TODO 1
+		for each in s_num:
+			if num.count(each) == 2:
+				s_num.remove(each)	
+				return 1, [each] + sort_num(s_num)
+	
+	else:
+		Straight = flush_check(num)
+		if not Straight: 
+			if not Flush:
+				# pass # TODO 0
+				return 0, sort_num(num)
+
+
+			else:
+				# pass # TODO 5
+				return 5, sort_num(num)
+
+		else:
+			# print("Straight" , Straight)
+			if Flush:
+				if Straight == 9:
+					# pass # TODO 9
+					return 9, []
+
+				else:
+					# pass # TODO 8
+					return 8, sort_num(num)
+
+			else:
+				# pass # TODO 4
+				print(sort_num(num))
+				return 4, sort_num(num)
+
+
+
+
+
 
 with open("Euler_54.txt") as file:
     lines = file.readlines()
 
-def check_cards(player):
-    pass
+p1_win = 0
 
 for line in lines:
-    card = line.split()
-    p1 = card[:5]
-    p2 = card[-5:]
-    print(p1,p2)
+	card = line.split()
+	p1 = card[:5]
+	p2 = card[-5:]
+	rank1, nums1 = check_cards(p1)
+	rank2, nums2 = check_cards(p2)
+	
+	# print()
+	# check = 4
+	# if rank1 == check or rank2 == check: 
+	# 	print(p1, rank1, nums1)
+	# 	print(p2, rank2, nums2)
+	# 	print()
+	
+	if rank1 < rank2:
+		pass
+	elif rank1 > rank2:
+		p1_win += 1
+		# print("p1 win")
+	else:
+		for i in range(len(nums1)):
+			n1 = value.index(nums1[i])
+			n2 = value.index(nums2[i])
+			if n1 > n2:
+				p1_win += 1		
+				# print("p1 win")
+				break
+			elif n1 < n2:
+				break
+
+print("Player 1 wins: ", p1_win)
