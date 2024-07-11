@@ -1,7 +1,7 @@
 from math import sqrt
 
 target = 36000000
-target //= 10
+target //= 11
 
 def find_factor_sum(n):
     factors = []
@@ -12,12 +12,16 @@ def find_factor_sum(n):
             if i != n_i:
                 factors.append(n_i)
 
-    
-    return sum(factors)
+    sum = 0
+    limit = n // 50
+    for each in factors:
+        if each > limit:
+            sum += each
+    return sum
  
 # print(find_factor_sum(1250000))
 
-for k in range(831500,831700):
+for k in range(831500,1500000):
     if find_factor_sum(k) >= target:
         print(k)
         break
